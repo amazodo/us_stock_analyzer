@@ -89,8 +89,33 @@ class ReportGenerator:
                         md += f"- [{title}]({url})\n"
                     md += "\n"
 
-            # Risk factors placeholder
-            md += f"**Key Risks**: [Integrate real risk factors from analysis]\n\n"
+            # Risk factors based on score and market conditions
+            risks = []
+
+            # Low score risk
+            if tech_score < 50:
+                risks.append("⚠️ Low technical score (weak signal)")
+
+            # High volatility risk
+            if tech_score > 75 and overall > 70:
+                risks.append("📈 High momentum (take profits early)")
+
+            # No news risk
+            if not (news_data and ticker in news_data):
+                risks.append("📰 Limited news coverage (low media attention)")
+
+            # Mid-range risk
+            if 50 <= tech_score < 65:
+                risks.append("⚖️ Mixed signals (wait for confirmation)")
+
+            # Display risks
+            if risks:
+                md += f"**Key Risks**\n"
+                for risk in risks:
+                    md += f"- {risk}\n"
+                md += "\n"
+            else:
+                md += f"**Key Risks**: No significant risks identified\n\n"
 
             md += "---\n\n"
 

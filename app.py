@@ -228,6 +228,25 @@ if 'results' in st.session_state:
 - **목표**: 1주일 내 5% 상승
 
 """
+
+            # Add risk factors
+            risks = []
+            if tech < 50:
+                risks.append("⚠️ 약한 기술 신호 (점수 낮음)")
+            if tech > 75 and overall > 70:
+                risks.append("📈 높은 모멘텀 (조기 익절 권장)")
+            if ticker not in news_data:
+                risks.append("📰 뉴스 부족 (관심도 낮음)")
+            if 50 <= tech < 65:
+                risks.append("⚖️ 혼합 신호 (확인 대기)")
+
+            if risks:
+                report_text += "**주의사항**:\n"
+                for risk in risks:
+                    report_text += f"- {risk}\n"
+                report_text += "\n"
+
+            # Add news
             if ticker in news_data:
                 report_text += f"**최신 뉴스**:\n"
                 for article in news_data[ticker][:3]:
