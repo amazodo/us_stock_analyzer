@@ -417,9 +417,9 @@ class AnalysisPipeline:
             else:
                 earnings_penalties[ticker] = 0.0
 
-        # Step 5: Rank and recommend
+        # Step 5: Rank and recommend (Technical only)
         logger.info("Ranking stocks...")
-        score_dict = {ticker: (tech, sent) for ticker, tech, sent in stock_scores}
+        score_dict = {ticker: tech for ticker, tech, sent in stock_scores}
         ranking_report = rank_and_recommend(
             score_dict,
             sector_bonuses=sector_bonuses,
