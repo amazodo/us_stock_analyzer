@@ -19,6 +19,27 @@ class TickerManager:
         'SPLK', 'SQ', 'TESLA', 'TWILIO', 'ZSCALER'
     }
 
+    # Default ticker lists (S&P 100 + NASDAQ 100)
+    DEFAULT_SP100 = [
+        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'TSLA', 'META', 'AVGO',
+        'NFLX', 'ASML', 'COST', 'JPM', 'JNPR', 'KO', 'MCD', 'NKE',
+        'PG', 'V', 'WMT', 'XOM', 'CVX', 'JNJ', 'LLY', 'UNH',
+        'MA', 'PYPL', 'ADBE', 'CRM', 'NFLX', 'INTC', 'AMD', 'QCOM',
+        'MU', 'CSCO', 'ORCL', 'IBM', 'ACN', 'AMAT', 'CDNS', 'ADSK',
+        'FAST', 'FTNT', 'MCHP', 'NVDA', 'GOOGL', 'BDX', 'ABT', 'CAT',
+        'DE', 'GE', 'HON', 'BA', 'RTX', 'LMT', 'GD', 'NOC'
+    ]
+
+    DEFAULT_NASDAQ100 = [
+        'AAPL', 'MSFT', 'GOOGL', 'GOOG', 'AMZN', 'NVDA', 'TSLA', 'META',
+        'AVGO', 'NFLX', 'ASML', 'COST', 'AMAZON', 'BROADCOM', 'NETFLIX',
+        'ADOBE', 'INTC', 'AMD', 'QCOM', 'MU', 'LRCX', 'MARVELL', 'AMAT',
+        'CDNS', 'SNPS', 'ADSK', 'ANSS', 'ABNB', 'AIRB', 'DASH', 'DDOG',
+        'ESTC', 'NTNX', 'OKTA', 'PSTG', 'SNOW', 'CRWD', 'CRM', 'PAYC',
+        'ADBE', 'COIN', 'MSTR', 'RIOT', 'MARA', 'CLSK', 'WDAY', 'VEEV',
+        'SPLK', 'OKTA', 'ZM', 'FTNT', 'PANW', 'PALO', 'SENTIO', 'CHECKPOINT'
+    ]
+
     def __init__(self):
         self.sp100 = []
         self.nasdaq100 = []
@@ -26,36 +47,39 @@ class TickerManager:
         self._load_tickers()
 
     def _load_tickers(self):
-        """Load tickers from JSON file."""
+        """Load tickers from JSON file or use defaults."""
         try:
             ticker_file = TICKER_DIR / "sp100_nasdaq100.json"
 
-            if not ticker_file.exists():
-                logger.warning(f"Ticker file not found: {ticker_file}")
-                self.sp100 = []
-                self.nasdaq100 = []
-            else:
+            if ticker_file.exists():
                 with open(ticker_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
-
-                self.sp100 = data.get('sp100', [])
-                self.nasdaq100 = data.get('nasdaq100', [])
-
-                logger.info(f"OK Loaded {len(self.sp100)} S&P 100 tickers")
-                logger.info(f"OK Loaded {len(self.nasdaq100)} NASDAQ 100 tickers")
+                self.sp100 = data.get('sp100', self.DEFAULT_SP100)
+                self.nasdaq100 = data.get('nasdaq100', self.DEFAULT_NASDAQ100)
+                logger.info(f"✅ Loaded {len(self.sp100)} S&P 100 tickers from file")
+                logger.info(f"✅ Loaded {len(self.nasdaq100)} NASDAQ 100 tickers from file")
+            else:
+                # Use default tickers if file doesn't exist
+                self.sp100 = self.DEFAULT_SP100
+                self.nasdaq100 = self.DEFAULT_NASDAQ100
+                logger.info(f"⚠️ Using default {len(self.sp100)} S&P 100 tickers (file not found)")
+                logger.info(f"⚠️ Using default {len(self.nasdaq100)} NASDAQ 100 tickers (file not found)")
 
             # Create unified universe (remove duplicates and blacklisted)
             all_tickers = set(self.sp100 + self.nasdaq100)
             self.unified_universe = [t for t in sorted(all_tickers) if t not in self.BLACKLIST]
 
             excluded_count = len(all_tickers) - len(self.unified_universe)
-            logger.info(f"OK Unified universe: {len(self.unified_universe)} tickers ({excluded_count} delisted/excluded)")
+            logger.info(f"✅ Unified universe: {len(self.unified_universe)} tickers ({excluded_count} delisted/excluded)")
 
         except Exception as e:
             logger.error(f"Error loading tickers: {e}")
-            self.sp100 = []
-            self.nasdaq100 = []
-            self.unified_universe = []
+            # Fall back to defaults
+            self.sp100 = self.DEFAULT_SP100
+            self.nasdaq100 = self.DEFAULT_NASDAQ100
+            all_tickers = set(self.sp100 + self.nasdaq100)
+            self.unified_universe = [t for t in sorted(all_tickers) if t not in self.BLACKLIST]
+            logger.info(f"⚠️ Fallback to defaults: {len(self.unified_universe)} tickers")
 
     def get_sp100(self) -> List[str]:
         """Get S&P 100 tickers (excluding blacklisted)."""
