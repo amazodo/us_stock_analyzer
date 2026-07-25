@@ -72,22 +72,30 @@ if not st.session_state.analysis_complete:
                     progress.progress(25)
 
                     results = pipeline.run_full_analysis()
-
                     progress.progress(70)
 
                     # Validate results
                     if not results:
                         st.error("❌ 분석 실패: 결과가 없습니다")
+                        st.error("**디버그 정보:**\n- 파이프라인 반환값: None")
                         st.stop()
+
+                    # Debug info
+                    tickers_requested = results.get('tickers_requested', 0)
+                    tickers_analyzed = results.get('tickers_analyzed', 0)
+                    tickers_failed = results.get('tickers_failed', 0)
+                    excluded_by_atr = results.get('tickers_excluded_by_atr', 0)
 
                     ranking_report = results.get('ranking_report', {})
                     if not ranking_report:
                         st.error("❌ 순위 데이터 없음")
+                        st.error(f"**디버그 정보:**\n- 요청된 종목: {tickers_requested}\n- 분석된 종목: {tickers_analyzed}\n- 실패: {tickers_failed}\n- ATR 제외: {excluded_by_atr}")
                         st.stop()
 
                     recommendations = ranking_report.get('recommendations', [])
                     if not recommendations:
-                        st.error(f"❌ 추천 없음 (분석: {results.get('tickers_analyzed', 0)})")
+                        st.error(f"❌ 추천 없음 (분석: {tickers_analyzed})")
+                        st.error(f"**디버그 정보:**\n- 요청: {tickers_requested}\n- 분석됨: {tickers_analyzed}\n- 실패: {tickers_failed}\n- ATR 제외: {excluded_by_atr}\n- Ranking Report 키: {list(ranking_report.keys())}")
                         st.stop()
 
                     top_stocks = recommendations[:5]
