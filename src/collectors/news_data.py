@@ -77,8 +77,14 @@ class NewsDataCollector:
             logger.info(f"OK Found {len(articles)} articles for '{query}'")
             return articles
 
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 429:
+                logger.warning(f"NewsAPI rate limit exceeded (429). Quota reset at UTC midnight.")
+            else:
+                logger.warning(f"Failed to fetch news for '{query}': HTTP {e.response.status_code}")
+            return None
         except requests.exceptions.RequestException as e:
-            logger.error(f"Error fetching news for '{query}': {e}")
+            logger.warning(f"Failed to fetch news for '{query}': {e}")
             return None
 
     def search_ticker_news(self, ticker: str, period_days: int = ANALYSIS_PERIOD_DAYS) -> Optional[List[Dict]]:

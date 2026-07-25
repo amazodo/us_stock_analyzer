@@ -74,11 +74,15 @@ if run_analysis:
                     logger.debug(f"News fetch failed for {ticker}: {e}")
             
             logger.info(f"Fetched news for {len(news_data)}/{len(top_stocks)} stocks")
-            
+
             # Save to session state
             st.session_state['results'] = results
             st.session_state['news_data'] = news_data
-            st.success("✅ 분석 완료!")
+
+            if len(news_data) < len(top_stocks):
+                st.success(f"✅ 분석 완료! (뉴스: {len(news_data)}/{len(top_stocks)} - API 할당량 제한)")
+            else:
+                st.success("✅ 분석 완료!")
             
         except Exception as e:
             logger.error(f"Analysis failed: {e}", exc_info=True)
