@@ -6,6 +6,7 @@ import json
 import logging
 
 logging.getLogger('yfinance').setLevel(logging.CRITICAL)
+logging.getLogger('urllib3').setLevel(logging.CRITICAL)
 
 from src.pipeline import AnalysisPipeline
 from src.collectors.news_data import NewsDataCollector
