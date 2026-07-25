@@ -45,15 +45,15 @@ def _get_secret(key_name: str, default: str = "") -> str:
     # Fall back to environment variables
     return os.getenv(key_name, default)
 
+# API Keys
+# Note: Only NEWS_API_KEY is required for news integration
+# ANTHROPIC_API_KEY is no longer used (sentiment analysis removed)
 NEWS_API_KEY = _get_secret("NEWS_API_KEY")
-ANTHROPIC_API_KEY = _get_secret("ANTHROPIC_API_KEY")
 TAVILY_API_KEY = _get_secret("TAVILY_API_KEY", "")
 
 # Validate API keys (warnings only, don't crash)
 if not NEWS_API_KEY:
-    print("[WARNING] NEWS_API_KEY not set (set in .env or Streamlit Secrets)")
-if not ANTHROPIC_API_KEY:
-    print("[WARNING] ANTHROPIC_API_KEY not set (set in .env or Streamlit Secrets)")
+    print("[WARNING] NEWS_API_KEY not set (optional, set in .env or Streamlit Secrets for news)")
 
 # ============================================
 # ANALYSIS SETTINGS

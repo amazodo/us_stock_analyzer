@@ -86,38 +86,32 @@ git push -u origin main
 2. 배포한 앱 클릭
 3. 우측 상단 **☰** → **Settings** 클릭
 4. **Secrets** 탭 클릭
-5. 다음 내용 복사-붙여넣기:
+5. 다음 내용 입력:
 
 ```toml
 NEWS_API_KEY = "your-news-api-key-here"
-ANTHROPIC_API_KEY = "your-anthropic-api-key-here"
 ```
 
 6. **Save** 클릭
 
-✅ 앱이 자동으로 재시작되고 API 키를 사용할 수 있습니다
+✅ 앱이 자동으로 재시작됩니다
 
-### 방법 2: 환경 변수 설정 (대안)
-
-**Streamlit Cloud 대시보드:**
-
-1. 앱 설정 → **Edit secrets**
-2. 동일한 내용 입력
+**📝 참고:**
+- NEWS_API_KEY는 뉴스 통합용 (선택사항, 없어도 분석은 정상 작동)
+- Sentiment analysis는 제거되어 ANTHROPIC_API_KEY는 불필요합니다
 
 ---
 
 ### 🔑 API 키 얻기
 
-**NewsAPI 키** (뉴스 통합용):
+**NewsAPI 키** (선택사항):
 1. https://newsapi.org 접속
 2. "Get API Key" 클릭
 3. 이메일로 가입
 4. 대시보드에서 API Key 복사
+5. Streamlit Cloud → Secrets에 입력
 
-**Anthropic API 키** (선택사항, 없어도 작동):
-1. https://console.anthropic.com 접속
-2. API Keys 메뉴 클릭
-3. 키 생성 및 복사
+**⚠️ API 키 없어도 앱이 작동합니다** (뉴스만 표시 안 됨)
 
 ---
 
