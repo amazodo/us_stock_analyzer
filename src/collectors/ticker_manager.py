@@ -16,28 +16,52 @@ class TickerManager:
     # Known delisted/problem tickers (no data available)
     BLACKLIST = {
         'ATVI', 'ANSS', 'BRK.B', 'CCXI', 'CMF', 'MMC', 'NBL', 'PLYA',
-        'SPLK', 'SQ', 'TESLA', 'TWILIO', 'ZSCALER'
+        'SQ', 'TSLA_OLD', 'TWILIO', 'ZSCALER'
     }
 
-    # Default ticker lists (S&P 100 + NASDAQ 100)
-    DEFAULT_SP100 = [
-        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'TSLA', 'META', 'AVGO',
-        'NFLX', 'ASML', 'COST', 'JPM', 'JNPR', 'KO', 'MCD', 'NKE',
-        'PG', 'V', 'WMT', 'XOM', 'CVX', 'JNJ', 'LLY', 'UNH',
-        'MA', 'PYPL', 'ADBE', 'CRM', 'NFLX', 'INTC', 'AMD', 'QCOM',
-        'MU', 'CSCO', 'ORCL', 'IBM', 'ACN', 'AMAT', 'CDNS', 'ADSK',
-        'FAST', 'FTNT', 'MCHP', 'NVDA', 'GOOGL', 'BDX', 'ABT', 'CAT',
-        'DE', 'GE', 'HON', 'BA', 'RTX', 'LMT', 'GD', 'NOC'
-    ]
-
-    DEFAULT_NASDAQ100 = [
-        'AAPL', 'MSFT', 'GOOGL', 'GOOG', 'AMZN', 'NVDA', 'TSLA', 'META',
-        'AVGO', 'NFLX', 'ASML', 'COST', 'AMAZON', 'BROADCOM', 'NETFLIX',
-        'ADOBE', 'INTC', 'AMD', 'QCOM', 'MU', 'LRCX', 'MARVELL', 'AMAT',
-        'CDNS', 'SNPS', 'ADSK', 'ANSS', 'ABNB', 'AIRB', 'DASH', 'DDOG',
-        'ESTC', 'NTNX', 'OKTA', 'PSTG', 'SNOW', 'CRWD', 'CRM', 'PAYC',
-        'ADBE', 'COIN', 'MSTR', 'RIOT', 'MARA', 'CLSK', 'WDAY', 'VEEV',
-        'SPLK', 'OKTA', 'ZM', 'FTNT', 'PANW', 'PALO', 'SENTIO', 'CHECKPOINT'
+    # Default ticker list - Top 100+ US stocks (S&P 100 + select NASDAQ 100)
+    # Carefully curated to avoid duplicates and delisted tickers
+    DEFAULT_TICKERS = [
+        # Mega-cap tech
+        'AAPL', 'MSFT', 'GOOGL', 'GOOG', 'AMZN', 'NVDA', 'META', 'AVGO',
+        # Consumer tech
+        'NFLX', 'ASML', 'INTC', 'AMD', 'QCOM', 'MU', 'LRCX', 'AMAT',
+        # Semiconductors
+        'CDNS', 'SNPS', 'ADSK', 'MCHP', 'MARVELL', 'KLAC', 'LSCC',
+        # Software & Cloud
+        'ORCL', 'CRM', 'ADBE', 'WDAY', 'SNOWK', 'OKTA', 'CRWD', 'PSTG',
+        # E-commerce & payment
+        'PYPL', 'MA', 'V', 'DIS', 'AIRB', 'ABNB', 'COIN',
+        # Transportation
+        'TSLA', 'UBER', 'LYFT',
+        # Retail & consumer
+        'AMZN', 'WMT', 'COST', 'MCD', 'NKE', 'KO', 'PG', 'JNJ', 'PEP',
+        # Communication
+        'T', 'VZ', 'CMCSA',
+        # Energy
+        'XOM', 'CVX', 'COP', 'EOG', 'MPC',
+        # Financial services
+        'JPM', 'BAC', 'GS', 'MS', 'BLK', 'SCHW', 'CME',
+        # Healthcare
+        'LLY', 'UNH', 'ABT', 'BDX', 'ISRG', 'ZTS', 'SYK', 'ILMN',
+        # Industrial
+        'CAT', 'DE', 'HON', 'BA', 'RTX', 'LMT', 'GD', 'NOC', 'ETN',
+        # Materials
+        'NEM', 'SCCO', 'FCX',
+        # Utilities
+        'NEE', 'DUK', 'SO', 'EXC',
+        # Real estate
+        'PLD', 'PSA', 'SPG', 'WRK',
+        # Communications
+        'DASH', 'DDOG', 'ZM', 'SNAP', 'PINS', 'TTD',
+        # Biotech & pharma
+        'REGN', 'BKNG', 'VRSK', 'TMFC',
+        # Media
+        'PARA', 'FOXA',
+        # Diversified
+        'GE', 'MMM', 'ACN', 'MKL', 'BRK.A', 'BERKSHIRE',
+        # Additional quality stocks
+        'PM', 'MSTR', 'RIOT', 'CIB', 'AXP', 'KHC', 'HON', 'RTX'
     ]
 
     def __init__(self):
@@ -54,40 +78,46 @@ class TickerManager:
             if ticker_file.exists():
                 with open(ticker_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
-                self.sp100 = data.get('sp100', self.DEFAULT_SP100)
-                self.nasdaq100 = data.get('nasdaq100', self.DEFAULT_NASDAQ100)
-                logger.info(f"✅ Loaded {len(self.sp100)} S&P 100 tickers from file")
-                logger.info(f"✅ Loaded {len(self.nasdaq100)} NASDAQ 100 tickers from file")
+                # Support both old format and new format
+                if 'tickers' in data:
+                    all_tickers = data.get('tickers', self.DEFAULT_TICKERS)
+                else:
+                    # Old format with sp100 and nasdaq100 separately
+                    sp100 = data.get('sp100', [])
+                    nasdaq100 = data.get('nasdaq100', [])
+                    all_tickers = list(set(sp100 + nasdaq100))
+
+                self.sp100 = data.get('sp100', self.DEFAULT_TICKERS[:50])
+                self.nasdaq100 = data.get('nasdaq100', self.DEFAULT_TICKERS[50:])
+                logger.info(f"✅ Loaded {len(all_tickers)} tickers from file")
             else:
                 # Use default tickers if file doesn't exist
-                self.sp100 = self.DEFAULT_SP100
-                self.nasdaq100 = self.DEFAULT_NASDAQ100
-                logger.info(f"⚠️ Using default {len(self.sp100)} S&P 100 tickers (file not found)")
-                logger.info(f"⚠️ Using default {len(self.nasdaq100)} NASDAQ 100 tickers (file not found)")
+                all_tickers = self.DEFAULT_TICKERS
+                self.sp100 = self.DEFAULT_TICKERS[:50]
+                self.nasdaq100 = self.DEFAULT_TICKERS[50:]
+                logger.info(f"⚠️ Using default {len(all_tickers)} tickers (file not found)")
 
             # Create unified universe (remove duplicates and blacklisted)
-            all_tickers = set(self.sp100 + self.nasdaq100)
-            self.unified_universe = [t for t in sorted(all_tickers) if t not in self.BLACKLIST]
+            all_tickers_set = set(all_tickers)
+            self.unified_universe = [t for t in sorted(all_tickers_set) if t not in self.BLACKLIST]
 
-            excluded_count = len(all_tickers) - len(self.unified_universe)
-            logger.info(f"✅ Unified universe: {len(self.unified_universe)} tickers ({excluded_count} delisted/excluded)")
+            excluded_count = len(all_tickers_set) - len(self.unified_universe)
+            logger.info(f"✅ Universe: {len(self.unified_universe)} tickers ({excluded_count} excluded)")
 
         except Exception as e:
             logger.error(f"Error loading tickers: {e}")
             # Fall back to defaults
-            self.sp100 = self.DEFAULT_SP100
-            self.nasdaq100 = self.DEFAULT_NASDAQ100
-            all_tickers = set(self.sp100 + self.nasdaq100)
+            all_tickers = set(self.DEFAULT_TICKERS)
             self.unified_universe = [t for t in sorted(all_tickers) if t not in self.BLACKLIST]
             logger.info(f"⚠️ Fallback to defaults: {len(self.unified_universe)} tickers")
 
     def get_sp100(self) -> List[str]:
         """Get S&P 100 tickers (excluding blacklisted)."""
-        return [t for t in self.sp100 if t not in self.BLACKLIST]
+        return [t for t in self.sp100 if t not in self.BLACKLIST and t in self.unified_universe]
 
     def get_nasdaq100(self) -> List[str]:
         """Get NASDAQ 100 tickers (excluding blacklisted)."""
-        return [t for t in self.nasdaq100 if t not in self.BLACKLIST]
+        return [t for t in self.nasdaq100 if t not in self.BLACKLIST and t in self.unified_universe]
 
     def get_unified_universe(self) -> List[str]:
         """Get unified S&P 100 + NASDAQ 100 (deduplicated)."""
