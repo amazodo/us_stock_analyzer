@@ -1,5 +1,14 @@
 """Streamlit app - US Stock AI Analyzer."""
 
+import sys
+import os
+
+# Fix path for Streamlit Cloud
+if '/mount/src' in os.getcwd():
+    sys.path.insert(0, '/mount/src/us_stock_analyzer')
+else:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 import streamlit as st
 from datetime import datetime
 import json
