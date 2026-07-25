@@ -54,13 +54,27 @@ if run_analysis:
         try:
             # Run pipeline
             logger.info(f"Starting analysis with {period_days} days")
+            st.write("🔍 파이프라인 초기화 중...")
+
             pipeline = AnalysisPipeline(period_days=period_days)
+            st.write("📊 분석 실행 중...")
+
             results = pipeline.run_full_analysis()
+            st.write(f"✅ 분석 완료 - 결과 타입: {type(results)}")
+            st.write(f"✅ 결과 키: {list(results.keys()) if results else 'None'}")
             
             # Fetch news for top 5
             logger.info("Fetching news for top 5 stocks")
             ranking_report = results.get('ranking_report', {})
+            st.write(f"📋 Ranking Report 키: {list(ranking_report.keys())}")
+
             top_stocks = ranking_report.get('recommendations', [])[:5]
+            st.write(f"📊 Top Stocks 개수: {len(top_stocks)}")
+
+            if not top_stocks:
+                st.error("❌ 추천 종목이 없습니다. 분석 결과를 확인하세요.")
+                st.write(f"DEBUG - Ranking Report: {ranking_report}")
+                st.stop()
             
             news_collector = NewsDataCollector()
             news_data = {}
