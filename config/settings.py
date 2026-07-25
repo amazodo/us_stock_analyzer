@@ -178,12 +178,14 @@ SENTIMENT_NEGATIVE_THRESHOLD = float(os.getenv("SENTIMENT_NEGATIVE_THRESHOLD", "
 CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-opus-4-1")
 
 # ============================================
-# ATR / VOLATILITY HARD FILTER  — NEW
+# ATR / VOLATILITY HARD FILTER
 # ============================================
 
 # ATR 변동성 필터 임계값 (%)
-# 1주일 내 5% 상승 가능성이 물리적으로 있는지 사전 검증
-ATR_FEASIBILITY_THRESHOLD_PCT = float(os.getenv("ATR_FEASIBILITY_THRESHOLD_PCT", "2.5"))
+# 낮은 값: 더 많은 종목 포함 (높은 변동성 요구 없음)
+# 높은 값: 높은 변동성 종목만 포함
+# 기본값 1.5%: 30일 기간에서 충분한 종목 포함
+ATR_FEASIBILITY_THRESHOLD_PCT = float(os.getenv("ATR_FEASIBILITY_THRESHOLD_PCT", "1.5"))
 
 # ============================================
 # EARNINGS RISK  — NEW
