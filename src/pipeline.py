@@ -391,9 +391,19 @@ class AnalysisPipeline:
         # Step 5: Rank and recommend (Technical only)
         logger.info("Ranking stocks...")
         score_dict = {ticker: tech for ticker, tech, sent in stock_scores}
+
+        # Normalize sector_bonuses: convert NaN to 0.0
+        import math
+        sector_bonuses_clean = {}
+        for ticker, bonus in sector_bonuses.items():
+            if isinstance(bonus, float) and math.isnan(bonus):
+                sector_bonuses_clean[ticker] = 0.0
+            else:
+                sector_bonuses_clean[ticker] = bonus
+
         ranking_report = rank_and_recommend(
             score_dict,
-            sector_bonuses=sector_bonuses,
+            sector_bonuses=sector_bonuses_clean,
             earnings_penalties=earnings_penalties,
             earnings_flags=earnings_flags
         )

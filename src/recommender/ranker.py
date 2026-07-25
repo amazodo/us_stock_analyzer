@@ -25,13 +25,21 @@ class StockScore:
             self.analysis_date = datetime.now().isoformat()
 
     def to_dict(self) -> Dict:
+        import math
+
+        # Handle NaN values
+        tech_score = 0.0 if math.isnan(self.technical_score) else self.technical_score
+        overall_score = 0.0 if math.isnan(self.overall_score) else self.overall_score
+        sector_bonus = 0.0 if math.isnan(self.sector_momentum_bonus) else self.sector_momentum_bonus
+        earnings_penalty = 0.0 if math.isnan(self.earnings_risk_penalty) else self.earnings_risk_penalty
+
         d = {
             'ticker': self.ticker,
-            'technical_score': round(self.technical_score, 1),
-            'overall_score': round(self.overall_score, 1),
+            'technical_score': round(tech_score, 1),
+            'overall_score': round(overall_score, 1),
             'analysis_date': self.analysis_date,
-            'sector_momentum_bonus': round(self.sector_momentum_bonus, 2),
-            'earnings_risk_penalty': round(self.earnings_risk_penalty, 2),
+            'sector_momentum_bonus': round(sector_bonus, 2),
+            'earnings_risk_penalty': round(earnings_penalty, 2),
         }
         if self.earnings_warning:
             d['earnings_warning'] = True
@@ -65,6 +73,13 @@ class StockRanker:
         Returns:
             Final score (0-100)
         """
+        import math
+
+        # Handle NaN values (convert to 0)
+        technical_score = 0.0 if math.isnan(technical_score) else technical_score
+        sector_momentum_bonus = 0.0 if math.isnan(sector_momentum_bonus) else sector_momentum_bonus
+        earnings_risk_penalty = 0.0 if math.isnan(earnings_risk_penalty) else earnings_risk_penalty
+
         final_score = (
             technical_score +
             sector_momentum_bonus -
@@ -91,12 +106,18 @@ class StockRanker:
         Returns:
             Sorted list of StockScore objects
         """
+        import math
+
         scores = []
 
         for ticker, tech_score in stock_scores:
             bonus = (sector_bonuses or {}).get(ticker, 0.0)
             penalty = (earnings_penalties or {}).get(ticker, 0.0)
             earnings_info = (earnings_flags or {}).get(ticker, {})
+
+            # Handle NaN values
+            bonus = 0.0 if math.isnan(bonus) else bonus
+            penalty = 0.0 if math.isnan(penalty) else penalty
 
             final_score = self.calculate_final_score(tech_score, bonus, penalty)
 
