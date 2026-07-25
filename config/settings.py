@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict, List
 from dotenv import load_dotenv
 
-# Load environment variables
+# Load environment variables from .env (local development)
 load_dotenv()
 
 # ============================================
@@ -27,15 +27,33 @@ for directory in [CACHE_DIR, TICKER_DIR, OUTPUT_DIR, LOGS_DIR]:
 # API CONFIGURATION
 # ============================================
 
-NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-TAVILY_API_KEY = os.getenv("TAVILY_API_KEY", "")
+# Try to get API keys from multiple sources:
+# 1. Streamlit secrets (for Streamlit Cloud)
+# 2. Environment variables (for local development)
+# 3. Default to empty string
 
-# Validate API keys
+def _get_secret(key_name: str, default: str = "") -> str:
+    """Get secret from Streamlit secrets or environment variables."""
+    try:
+        # Try Streamlit secrets first (for Streamlit Cloud)
+        import streamlit as st
+        if hasattr(st, 'secrets') and key_name in st.secrets:
+            return st.secrets[key_name]
+    except (ImportError, AttributeError):
+        pass
+
+    # Fall back to environment variables
+    return os.getenv(key_name, default)
+
+NEWS_API_KEY = _get_secret("NEWS_API_KEY")
+ANTHROPIC_API_KEY = _get_secret("ANTHROPIC_API_KEY")
+TAVILY_API_KEY = _get_secret("TAVILY_API_KEY", "")
+
+# Validate API keys (warnings only, don't crash)
 if not NEWS_API_KEY:
-    print("[WARNING] NEWS_API_KEY not set in .env file")
+    print("[WARNING] NEWS_API_KEY not set (set in .env or Streamlit Secrets)")
 if not ANTHROPIC_API_KEY:
-    print("[WARNING] ANTHROPIC_API_KEY not set in .env file")
+    print("[WARNING] ANTHROPIC_API_KEY not set (set in .env or Streamlit Secrets)")
 
 # ============================================
 # ANALYSIS SETTINGS
