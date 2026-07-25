@@ -1,13 +1,9 @@
-"""Streamlit app - US Stock AI Analyzer."""
-
+# v2 - Streamlit app - US Stock AI Analyzer
 import sys
 import os
 
 # Fix path for Streamlit Cloud
-if '/mount/src' in os.getcwd():
-    sys.path.insert(0, '/mount/src/us_stock_analyzer')
-else:
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import streamlit as st
 from datetime import datetime
@@ -122,7 +118,7 @@ if not st.session_state.analysis_complete:
                     progress.progress(100)
                     status.text("✅ 분석 완료!")
 
-                    # Clear status after 2 seconds
+                    # Clear status after 1 second
                     import time
                     time.sleep(1)
                     progress_container.empty()
