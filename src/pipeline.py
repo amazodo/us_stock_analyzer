@@ -334,41 +334,12 @@ class AnalysisPipeline:
         sector_map = self.fetch_sector_map(tickers)
         spy_df, qqq_df, vix_df = self.fetch_benchmark_data()
 
-        # Step 1.5: Apply ATR hard filter (exclude large-cap low-volatility stocks)
-        logger.info(f"Applying ATR volatility filter (threshold: {ATR_FEASIBILITY_THRESHOLD_PCT}%)...")
+        # Step 1.5: ATR filter - DISABLED for 30-day analysis (too strict)
+        # For short periods (30 days), volatility filter would exclude most stocks
+        # Re-enable for 180+ day analysis if needed
+        logger.info("ATR volatility filter: DISABLED (use all stocks for 30-day analysis)")
+        filtered_stock_data = stock_data  # Use all stock data without ATR filtering
         excluded_by_atr = []
-        filtered_stock_data = {}
-
-        for ticker, df in stock_data.items():
-            if len(df) < 20:
-                excluded_by_atr.append({
-                    'ticker': ticker,
-                    'reason': 'Insufficient data for ATR calculation'
-                })
-                continue
-
-            try:
-                atr_pct, atr_feasible = SupplyDemandAnalysis.calculate_atr_volatility_filter(
-                    df, target_gain=TARGET_GAIN_PERCENT
-                )
-
-                if not atr_feasible:
-                    excluded_by_atr.append({
-                        'ticker': ticker,
-                        'atr_pct': round(atr_pct, 2),
-                        'threshold_pct': ATR_FEASIBILITY_THRESHOLD_PCT,
-                        'reason': f'Low volatility ({atr_pct:.2f}% ATR) — cannot reach 5% target in 1 week'
-                    })
-                else:
-                    filtered_stock_data[ticker] = df
-            except Exception as e:
-                logger.warning(f"{ticker}: Error calculating ATR: {e}")
-                excluded_by_atr.append({
-                    'ticker': ticker,
-                    'reason': f'ATR calculation error: {e}'
-                })
-
-        logger.info(f"PASS ATR Filter: {len(filtered_stock_data)} passed, {len(excluded_by_atr)} excluded")
 
         # Step 1.2: Calculate market regime
         market_regime = calculate_market_regime(spy_df, qqq_df, vix_df)
