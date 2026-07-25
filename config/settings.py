@@ -37,9 +37,15 @@ def _get_secret(key_name: str, default: str = "") -> str:
     try:
         # Try Streamlit secrets first (for Streamlit Cloud)
         import streamlit as st
-        if hasattr(st, 'secrets') and key_name in st.secrets:
-            return st.secrets[key_name]
-    except (ImportError, AttributeError):
+        if hasattr(st, 'secrets'):
+            try:
+                if key_name in st.secrets:
+                    return st.secrets[key_name]
+            except Exception:
+                # Streamlit secrets not available or invalid
+                pass
+    except (ImportError, AttributeError, Exception):
+        # Streamlit not available
         pass
 
     # Fall back to environment variables
