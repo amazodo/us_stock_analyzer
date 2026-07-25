@@ -31,7 +31,7 @@ class TickerManager:
         # Software & Cloud (8)
         'ORCL', 'CRM', 'ADBE', 'WDAY', 'SNOW', 'OKTA', 'CRWD', 'PSTG',
         # Design & analytics (4)
-        'ADSK', 'TABLEAU', 'BKNG', 'VRSK',
+        'ADSK', 'BKNG', 'VRSK', 'BLDR',
         # E-commerce & payment (6)
         'PYPL', 'MA', 'V', 'DIS', 'ABNB', 'COIN',
         # Transportation (3)
@@ -53,7 +53,7 @@ class TickerManager:
         # Utilities (4)
         'NEE', 'DUK', 'SO', 'EXC',
         # Real estate (4)
-        'PLD', 'PSA', 'SPG', 'REIT',
+        'PLD', 'PSA', 'SPG', 'AVB',
         # Cloud & Data (6)
         'DASH', 'DDOG', 'ZM', 'SNAP', 'PINS', 'TTD',
         # Diversified (6)
@@ -61,7 +61,7 @@ class TickerManager:
         # Crypto & growth (4)
         'MSTR', 'RIOT', 'COIN', 'ETN',
         # Additional quality stocks (5)
-        'KHC', 'CIB', 'VEEV', 'AVAV', 'OWL'
+        'KHC', 'CIB', 'VEEV', 'CHWY', 'UPST'
     ]
 
     def __init__(self):
