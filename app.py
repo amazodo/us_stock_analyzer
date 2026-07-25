@@ -98,17 +98,22 @@ if run_button:
             progress_bar.progress(60)
 
             if not results or 'ranking_report' not in results:
-                logger.error(f"Invalid results: {type(results)}")
-                st.error("❌ 분석 실패: 결과가 없습니다. 다시 시도하세요.")
+                logger.error(f"Invalid results. Keys: {list(results.keys()) if results else 'None'}")
+                st.error(f"❌ 분석 실패: {list(results.keys()) if results else '결과 없음'}")
                 st.stop()
 
             # Extract recommendations
             ranking_report = results.get('ranking_report', {})
+            logger.info(f"Ranking report keys: {list(ranking_report.keys())}")
+            logger.info(f"Stock scores count: {len(results.get('stock_scores', []))}")
+            logger.info(f"Analyzed tickers: {results.get('tickers_analyzed', 0)}")
+
             recommendations = ranking_report.get('recommendations', [])
+            logger.info(f"Recommendations count: {len(recommendations)}")
 
             if not recommendations:
-                logger.error(f"No recommendations in ranking_report")
-                st.error("❌ 추천 종목을 찾을 수 없습니다. 나중에 다시 시도하세요.")
+                logger.error(f"Ranking report contents: {ranking_report}")
+                st.error(f"❌ 추천 종목을 찾을 수 없습니다. (분석: {results.get('tickers_analyzed', 0)}건)")
                 st.stop()
 
             top_stocks = recommendations[:5]
