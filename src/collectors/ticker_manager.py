@@ -22,46 +22,46 @@ class TickerManager:
     # Default ticker list - Top 100+ US stocks (S&P 100 + select NASDAQ 100)
     # Carefully curated to avoid duplicates and delisted tickers
     DEFAULT_TICKERS = [
-        # Mega-cap tech
-        'AAPL', 'MSFT', 'GOOGL', 'GOOG', 'AMZN', 'NVDA', 'META', 'AVGO',
-        # Consumer tech
-        'NFLX', 'ASML', 'INTC', 'AMD', 'QCOM', 'MU', 'LRCX', 'AMAT',
-        # Semiconductors
-        'CDNS', 'SNPS', 'ADSK', 'MCHP', 'MARVELL', 'KLAC', 'LSCC',
-        # Software & Cloud
-        'ORCL', 'CRM', 'ADBE', 'WDAY', 'SNOWK', 'OKTA', 'CRWD', 'PSTG',
-        # E-commerce & payment
-        'PYPL', 'MA', 'V', 'DIS', 'AIRB', 'ABNB', 'COIN',
-        # Transportation
+        # Mega-cap tech (8)
+        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'META', 'AVGO', 'GOOG',
+        # Consumer tech (7)
+        'NFLX', 'ASML', 'INTC', 'AMD', 'QCOM', 'MU', 'AMAT',
+        # Semiconductors (6)
+        'CDNS', 'SNPS', 'MCHP', 'MARVELL', 'KLAC', 'LSCC',
+        # Software & Cloud (8)
+        'ORCL', 'CRM', 'ADBE', 'WDAY', 'SNOW', 'OKTA', 'CRWD', 'PSTG',
+        # Design & analytics (4)
+        'ADSK', 'TABLEAU', 'BKNG', 'VRSK',
+        # E-commerce & payment (6)
+        'PYPL', 'MA', 'V', 'DIS', 'ABNB', 'COIN',
+        # Transportation (3)
         'TSLA', 'UBER', 'LYFT',
-        # Retail & consumer
-        'AMZN', 'WMT', 'COST', 'MCD', 'NKE', 'KO', 'PG', 'JNJ', 'PEP',
-        # Communication
-        'T', 'VZ', 'CMCSA',
-        # Energy
+        # Retail & consumer (9)
+        'WMT', 'COST', 'MCD', 'NKE', 'KO', 'PG', 'JNJ', 'PEP', 'LRCX',
+        # Telecom & Media (5)
+        'T', 'VZ', 'CMCSA', 'PARA', 'FOXA',
+        # Energy (5)
         'XOM', 'CVX', 'COP', 'EOG', 'MPC',
-        # Financial services
+        # Financial services (7)
         'JPM', 'BAC', 'GS', 'MS', 'BLK', 'SCHW', 'CME',
-        # Healthcare
-        'LLY', 'UNH', 'ABT', 'BDX', 'ISRG', 'ZTS', 'SYK', 'ILMN',
-        # Industrial
-        'CAT', 'DE', 'HON', 'BA', 'RTX', 'LMT', 'GD', 'NOC', 'ETN',
-        # Materials
+        # Healthcare & Pharma (9)
+        'LLY', 'UNH', 'ABT', 'BDX', 'ISRG', 'ZTS', 'SYK', 'ILMN', 'REGN',
+        # Industrial & Defense (8)
+        'CAT', 'DE', 'HON', 'BA', 'RTX', 'LMT', 'GD', 'NOC',
+        # Materials (3)
         'NEM', 'SCCO', 'FCX',
-        # Utilities
+        # Utilities (4)
         'NEE', 'DUK', 'SO', 'EXC',
-        # Real estate
-        'PLD', 'PSA', 'SPG', 'WRK',
-        # Communications
+        # Real estate (4)
+        'PLD', 'PSA', 'SPG', 'REIT',
+        # Cloud & Data (6)
         'DASH', 'DDOG', 'ZM', 'SNAP', 'PINS', 'TTD',
-        # Biotech & pharma
-        'REGN', 'BKNG', 'VRSK', 'TMFC',
-        # Media
-        'PARA', 'FOXA',
-        # Diversified
-        'GE', 'MMM', 'ACN', 'MKL', 'BRK.A', 'BERKSHIRE',
-        # Additional quality stocks
-        'PM', 'MSTR', 'RIOT', 'CIB', 'AXP', 'KHC', 'HON', 'RTX'
+        # Diversified (6)
+        'GE', 'MMM', 'ACN', 'BRK.A', 'PM', 'AXP',
+        # Crypto & growth (4)
+        'MSTR', 'RIOT', 'COIN', 'ETN',
+        # Additional quality stocks (5)
+        'KHC', 'CIB', 'VEEV', 'AVAV', 'OWL'
     ]
 
     def __init__(self):
