@@ -1,0 +1,26 @@
+# Core dependencies
+streamlit>=1.28.0
+pandas>=2.0.0
+numpy>=1.24.0
+python-dotenv>=1.0.0
+
+# Market data
+yfinance>=0.2.32
+ta>=0.10.2
+
+# News and web
+requests>=2.31.0
+newsapi-python>=0.2.0
+
+# PDF export
+reportlab>=4.0.0
+pypdf>=3.17.0
+
+# Utilities
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Development (optional)
+pytest>=7.4.0
+black>=23.0.0
+flake8>=6.1.0

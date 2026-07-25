@@ -1,0 +1,53 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Cache and data
+data/cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/cache/
+
+# Outputs
+outputs/
+*.pdf
+*.json
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# OS
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Test
+.pytest_cache/
+.coverage
+htmlcov/

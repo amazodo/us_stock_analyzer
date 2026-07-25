@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>백테스트 분석 보고서</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px;
+        }
+        .summary-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .summary-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .summary-box h3 {
+            color: #667eea;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .summary-box .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+        .summary-box .unit {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .chart-container {
+            margin-bottom: 40px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        .chart-container h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        .analysis-section {
+            margin-bottom: 40px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .analysis-section h2 {
+            color: #667eea;
+            font-size: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .phase-box {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #764ba2;
+        }
+        .phase-box h4 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+        .phase-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            font-size: 13px;
+        }
+        .stat-item {
+            padding: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+        .stat-label {
+            font-weight: bold;
+            color: #667eea;
+        }
+        .insight {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .insight strong {
+            color: #856404;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+        }
+        table tr:hover {
+            background: #f5f5f5;
+        }
+        .negative {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .positive {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .footer {
+            background: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 주간 백테스트 분석 보고서</h1>
+            <p>기술분석 기반 주간 매매 전략 (2025-07-25 ~ 2026-07-25)</p>
+        </div>
+
+        <div class="content">
+            <!-- Summary Boxes -->
+            <div class="summary-boxes">
+                <div class="summary-box">
+                    <h3>총 거래 수</h3>
+                    <div class="value">255</div>
+                    <div class="unit">51주 × 5종목</div>
+                </div>
+                <div class="summary-box">
+                    <h3>총 수익</h3>
+                    <div class="value positive">+$322.19</div>
+                    <div class="unit">누적 P&L</div>
+                </div>
+                <div class="summary-box">
+                    <h3>승률</h3>
+                    <div class="value">54.12%</div>
+                    <div class="unit">138승 / 117패</div>
+                </div>
+                <div class="summary-box">
+                    <h3>누적 수익률</h3>
+                    <div class="value positive">+33.32%</div>
+                    <div class="unit">평균 주간 +0.65%</div>
+                </div>
+            </div>
+
+            <!-- Chart 1: Cumulative P&L -->
+            <div class="chart-container">
+                <h2>누적 P&L 추이</h2>
+                <div id="chart-cumulative"></div>
+                <p style="font-size: 13px; color: #666; margin-top: 10px;">
+                    <strong>해석:</strong> 전반적 상승 추세를 보이며, 여름철 강세, 겨울철 약세의 계절성이 명확히 드러남.
+                </p>
+            </div>
+
+            <!-- Chart 2: Weekly P&L -->
+            <div class="chart-container">
+                <h2>주간 P&L 분포</h2>
+                <div id="chart-weekly-pnl"></div>
+                <p style="font-size: 13px; color: #666; margin-top: 10px;">
+                    <strong>해석:</strong> 녹색(수익) 주가 적색(손실) 주보다 많음. 5월 중순과 6월 말에 큰 변동성 주목.
+                </p>
+            </div>
+
+            <!-- Chart 3: Win Rate -->
+            <div class="chart-container">
+                <h2>주간 승률 추이 (%)</h2>
+                <div id="chart-win-rate"></div>
+                <p style="font-size: 13px; color: #666; margin-top: 10px;">
+                    <strong>해석:</strong> 여름~가을은 60-80% 승률, 겨울~봄은 40-60%로 계절별 편차 명확.
+                </p>
+            </div>
+
+            <!-- Phase Analysis -->
+            <div class="analysis-section">
+                <h2>🔍 계절별 성과 분석</h2>
+
+                <div class="phase-box">
+                    <h4>📈 PHASE 1: 여름 (7월-9월, Weeks 1-13)</h4>
+                    <div class="phase-stats">
+                        <div class="stat-item"><span class="stat-label">수익률:</span> <span class="positive">+1.62%</span>/주</div>
+                        <div class="stat-item"><span class="stat-label">승률:</span> <span class="positive">72.3%</span></div>
+                        <div class="stat-item"><span class="stat-label">총 P&L:</span> <span class="positive">+$194.11</span></div>
+                        <div class="stat-item"><span class="stat-label">평균 점수:</span> 74.5</div>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 13px;">
+                        <strong>✓ 강점:</strong> 가장 높은 수익률과 승률. 기술지표가 시장과 동조성 높음.
+                    </p>
+                </div>
+
+                <div class="phase-box">
+                    <h4>📊 PHASE 2: 가을 (10월-12월, Weeks 14-26)</h4>
+                    <div class="phase-stats">
+                        <div class="stat-item"><span class="stat-label">수익률:</span> +0.53%/주</div>
+                        <div class="stat-item"><span class="stat-label">승률:</span> 52.3%</div>
+                        <div class="stat-item"><span class="stat-label">총 P&L:</span> <span class="positive">+$93.99</span></div>
+                        <div class="stat-item"><span class="stat-label">평균 점수:</span> 79.3</div>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 13px;">
+                        <strong>△ 약세:</strong> 점수는 높아지지만 수익성 악화. 시장 변동성 증가.
+                    </p>
+                </div>
+
+                <div class="phase-box">
+                    <h4>📉 PHASE 3: 겨울 (1월-3월, Weeks 27-39)</h4>
+                    <div class="phase-stats">
+                        <div class="stat-item"><span class="stat-label">수익률:</span> <span class="negative">+0.28%</span>/주</div>
+                        <div class="stat-item"><span class="stat-label">승률:</span> <span class="negative">44.6%</span></div>
+                        <div class="stat-item"><span class="stat-label">총 P&L:</span> <span class="negative">-$9.89</span></div>
+                        <div class="stat-item"><span class="stat-label">평균 점수:</span> 77.8</div>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 13px;">
+                        <strong>✗ 약점:</strong> 유일하게 손실. 기술지표의 예측력 가장 낮음. 시장 변동성 큼.
+                    </p>
+                </div>
+
+                <div class="phase-box">
+                    <h4>📌 PHASE 4: 봄 (4월-7월, Weeks 40-51)</h4>
+                    <div class="phase-stats">
+                        <div class="stat-item"><span class="stat-label">수익률:</span> +0.13%/주</div>
+                        <div class="stat-item"><span class="stat-label">승률:</span> 46.7%</div>
+                        <div class="stat-item"><span class="stat-label">총 P&L:</span> <span class="positive">+$43.98</span></div>
+                        <div class="stat-item"><span class="stat-label">평균 점수:</span> 79.0</div>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 13px;">
+                        <strong>△ 회복:</strong> 겨울보다 나아졌지만 변동성 여전히 높음. Week 48에서 최고 수익 기록.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Key Insights -->
+            <div class="analysis-section">
+                <h2>💡 주요 발견 사항</h2>
+
+                <div class="insight">
+                    <strong>1. 강한 계절성 (Seasonality)</strong><br>
+                    여름: +1.62%/주 → 겨울: +0.28%/주로 계절에 따라 수익률이 5.8배 차이.
+                    겨울철 시장의 높은 변동성과 기술지표의 신뢰성 저하가 원인.
+                </div>
+
+                <div class="insight">
+                    <strong>2. 점수와 수익률의 약한 상관관계 (-0.037)</strong><br>
+                    기술 점수가 높다고 해서 수익률이 높지 않음. 겨울에 점수 79.3이지만 수익률 0.53%.
+                    시장 체제(Regime) 변화에 대한 동적 조정 필요.
+                </div>
+
+                <div class="insight">
+                    <strong>3. 단일 종목의 큰 영향 (Single Stock Risk)</strong><br>
+                    최악주 Week 43: COST -4.72%, WMT -9.21% 등 개별 종목이 전체 P&L의 대부분 결정.
+                    포트폴리오 다각화 또는 손절(Stop Loss) 메커니즘 필요.
+                </div>
+
+                <div class="insight">
+                    <strong>4. 5월 중순-6월 말 위기 (May-Jun Turbulence)</strong><br>
+                    Week 43-44, 49-50에서 연속 손실. 계절적 약세(Sell in May and Go Away)와 일치.
+                    이 기간 예비 자금 확보 또는 포지션 축소 권장.
+                </div>
+
+                <div class="insight">
+                    <strong>5. 최상 수익은 여름 초반과 가을 중반</strong><br>
+                    Week 1-8: 강한 상승장 반영<br>
+                    Week 17: 변동성 정점에서도 완벽한 5/5 승리<br>
+                    Week 48: 6월 말 반등 시장 포착
+                </div>
+            </div>
+
+            <!-- Best & Worst Weeks -->
+            <div class="analysis-section">
+                <h2>🏆 최고 & 최악 주간 분석</h2>
+
+                <h3 style="color: #28a745; margin-top: 20px; margin-bottom: 10px;">✓ TOP 5 최고 수익 주간</h3>
+                <table>
+                    <tr>
+                        <th>주</th>
+                        <th>날짜</th>
+                        <th>Top5 종목</th>
+                        <th>승률</th>
+                        <th>P&L</th>
+                        <th>수익률</th>
+                        <th>원인 분석</th>
+                    </tr>
+                    <tr>
+                        <td><strong>48</strong></td>
+                        <td>2026-06-23</td>
+                        <td>IRM, SPG, JNJ, FITB, CAT</td>
+                        <td>80% (4/5)</td>
+                        <td class="positive">+$95.49</td>
+                        <td class="positive">+5.24%</td>
+                        <td>CAT +6.06%, JNJ +9.91% 대형주 랠리</td>
+                    </tr>
+                    <tr>
+                        <td><strong>17</strong></td>
+                        <td>2025-11-18</td>
+                        <td>PFE, GILD, FDX, HLT, REGN</td>
+                        <td>100% (5/5)</td>
+                        <td class="positive">+$79.89</td>
+                        <td class="positive">+3.43%</td>
+                        <td>헬스케어/제약주 강세, 완벽 승리</td>
+                    </tr>
+                    <tr>
+                        <td><strong>8</strong></td>
+                        <td>2025-09-16</td>
+                        <td>QCOM, CAT, LYV, JPM, GS</td>
+                        <td>80% (4/5)</td>
+                        <td class="positive">+$59.08</td>
+                        <td class="positive">+2.70%</td>
+                        <td>금융/산업주 강세, CAT +8.51%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>42</strong></td>
+                        <td>2026-05-12</td>
+                        <td>BIIB, EBAY, NVDA, COST, PSA</td>
+                        <td>60% (3/5)</td>
+                        <td class="positive">+$57.75</td>
+                        <td class="positive">+0.99%</td>
+                        <td>COST +7.43% 메가캡 강세</td>
+                    </tr>
+                    <tr>
+                        <td><strong>7</strong></td>
+                        <td>2025-09-09</td>
+                        <td>GS, AMZN, LOW, DASH, QCOM</td>
+                        <td>80% (4/5)</td>
+                        <td class="positive">+$53.18</td>
+                        <td class="positive">+1.74%</td>
+                        <td>GS +6.67% 금융주 강세</td>
+                    </tr>
+                </table>
+
+                <h3 style="color: #dc3545; margin-top: 30px; margin-bottom: 10px;">✗ TOP 5 최악 손실 주간</h3>
+                <table>
+                    <tr>
+                        <th>주</th>
+                        <th>날짜</th>
+                        <th>Top5 종목</th>
+                        <th>승률</th>
+                        <th>P&L</th>
+                        <th>수익률</th>
+                        <th>원인 분석</th>
+                    </tr>
+                    <tr>
+                        <td><strong>49</strong></td>
+                        <td>2026-06-30</td>
+                        <td>CAT, EQR, LLY, PM, JNJ</td>
+                        <td>80% (4/5)</td>
+                        <td class="negative">-$77.95</td>
+                        <td class="negative">+0.35%</td>
+                        <td>CAT -9.43% 급락 (유일 손실)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>43</strong></td>
+                        <td>2026-05-19</td>
+                        <td>WMT, MO, COST, PM, CVX</td>
+                        <td>20% (1/5)</td>
+                        <td class="negative">-$68.83</td>
+                        <td class="negative">-3.33%</td>
+                        <td>WMT -9.21%, COST -4.72% 소비재 약세</td>
+                    </tr>
+                    <tr>
+                        <td><strong>44</strong></td>
+                        <td>2026-05-26</td>
+                        <td>SPG, LLY, PM, KO, ROST</td>
+                        <td>0% (0/5)</td>
+                        <td class="negative">-$44.88</td>
+                        <td class="negative">-4.07%</td>
+                        <td>5연패 모두 손실, PM -10.34%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>37</strong></td>
+                        <td>2026-04-07</td>
+                        <td>ROST, NEE, EBAY, COST, CSCO</td>
+                        <td>60% (3/5)</td>
+                        <td class="negative">-$44.25</td>
+                        <td class="negative">-0.43%</td>
+                        <td>COST -4.57% 메가캡 약세</td>
+                    </tr>
+                    <tr>
+                        <td><strong>14</strong></td>
+                        <td>2025-10-28</td>
+                        <td>FDX, MSFT, CSCO, AAPL, JCI</td>
+                        <td>20% (1/5)</td>
+                        <td class="negative">-$37.39</td>
+                        <td class="negative">-0.93%</td>
+                        <td>MSFT -6.95% 기술주 약세</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="analysis-section">
+                <h2>🎯 개선 제안</h2>
+
+                <div class="insight">
+                    <strong>1. 동적 리스크 관리 (Dynamic Risk Management)</strong><br>
+                    겨울철 윈도우(1월-3월)에서 포지션 크기 50% 축소 또는 손절 20% 설정.
+                    VIX > 20일 때 접근성 높은 종목 우선 선택.
+                </div>
+
+                <div class="insight">
+                    <strong>2. 시장 체제 필터 (Market Regime Filter)</strong><br>
+                    현재 점수 계산에 시장 체제(Safe/Caution/Risk-Off)를 반영하여,
+                    위험 국면에서는 기술 점수 기준을 +10점 상향 조정.
+                </div>
+
+                <div class="insight">
+                    <strong>3. 손절/익절 메커니즘 (Stop Loss / Take Profit)</strong><br>
+                    일주일 중 손실 > 2%인 경우 남은 기간 청산 고려.
+                    이익 > 3%인 경우 절반 포지션 익절 (Week 43-44 손실 회피).
+                </div>
+
+                <div class="insight">
+                    <strong>4. 섹터 회전 (Sector Rotation)</strong><br>
+                    여름: 경기민감주(금융, 산업, 기술) 선호<br>
+                    겨울: 방어주(의료, 소비재, 유틸리티) 선호<br>
+                    현재 Top5 선정에 섹터 가중치 추가.
+                </div>
+
+                <div class="insight">
+                    <strong>5. 포지션 다각화 (Position Sizing)</strong><br>
+                    현재 주당 5종목 동일 비중. 점수 상위 종목에 더 큰 비중 배분.
+                    예: 점수 상위 2개는 20%, 하위 1개는 15% 비중.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <p>분석 기간: 2025-07-25 ~ 2026-07-25 (51주)</p>
+            <p>방법론: 기술분석 5가지 지표 (MA, Momentum, Volatility, Volume, Fibonacci)</p>
+            <p>데이터 소스: Yahoo Finance / S&P 100 Universe</p>
+        </div>
+    </div>
+
+    <script>
+        // Chart 1: Cumulative P&L
+        const weeks = Array.from({length: 51}, (_, i) => i + 1);
+        const cumPnl = [4.98, -4.72, 0.90, 10.99, 26.84, 58.82, 111.99, 171.07, 185.75, 188.69, 165.05, 177.74, 195.10, 157.71, 161.60, 173.62, 253.51, 257.27, 295.82, 306.37, 309.25, 283.75, 261.24, 267.37, 277.15, 289.08, 297.32, 305.32, 319.22, 313.40, 307.58, 285.07, 262.56, 271.81, 281.06, 277.07, 232.82, 283.35, 310.30, 360.44, 367.73, 425.48, 356.65, 311.77, 316.48, 358.30, 348.88, 444.37, 366.42, 357.74, 354.28];
+
+        Plotly.newPlot('chart-cumulative', [
+            {
+                x: weeks,
+                y: cumPnl,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Cumulative P&L',
+                line: {color: '#667eea', width: 2},
+                fill: 'tozeroy',
+                fillcolor: 'rgba(102, 126, 234, 0.1)',
+                marker: {size: 4, color: '#667eea'}
+            }
+        ], {
+            title: '누적 P&L 추이',
+            xaxis: {title: '주차'},
+            yaxis: {title: 'P&L ($)'},
+            hovermode: 'x unified',
+            template: 'plotly_white'
+        });
+
+        // Chart 2: Weekly P&L
+        const weeklyPnl = [4.98, -9.70, 5.62, 9.09, 15.85, 31.98, 53.18, 59.08, 14.68, 2.94, -23.64, 12.69, 17.36, -37.39, 3.90, 12.02, 79.89, 3.76, 38.55, 10.55, 2.88, -25.50, -22.51, 6.13, 9.78, 11.93, 8.24, 8.00, 13.90, -5.82, -13.15, -22.51, -3.17, -34.87, 9.25, -2.99, -44.25, 50.53, 26.95, 50.14, 7.29, 57.75, -68.83, -44.88, 4.71, 41.82, -9.42, 95.49, -77.95, -8.68, -3.46];
+        const colors = weeklyPnl.map(x => x > 0 ? '#28a745' : '#dc3545');
+
+        Plotly.newPlot('chart-weekly-pnl', [
+            {
+                x: weeks,
+                y: weeklyPnl,
+                type: 'bar',
+                marker: {color: colors},
+                name: 'Weekly P&L'
+            }
+        ], {
+            title: '주간 P&L 분포',
+            xaxis: {title: '주차'},
+            yaxis: {title: 'P&L ($)'},
+            template: 'plotly_white'
+        });
+
+        // Chart 3: Win Rate
+        const winRates = [80, 40, 80, 60, 100, 60, 80, 80, 60, 80, 20, 100, 100, 20, 60, 60, 100, 40, 60, 60, 40, 60, 20, 60, 60, 40, 60, 80, 60, 40, 0, 0, 20, 60, 60, 20, 60, 60, 60, 40, 40, 60, 20, 0, 60, 80, 40, 80, 80, 20, 40];
+
+        Plotly.newPlot('chart-win-rate', [
+            {
+                x: weeks,
+                y: winRates,
+                type: 'bar',
+                marker: {
+                    color: winRates.map(x => x >= 60 ? '#28a745' : x >= 40 ? '#ffc107' : '#dc3545')
+                },
+                name: 'Win Rate'
+            }
+        ], {
+            title: '주간 승률 (%)',
+            xaxis: {title: '주차'},
+            yaxis: {title: '승률 (%)'},
+            template: 'plotly_white'
+        });
+    </script>
+</body>
+</html>
